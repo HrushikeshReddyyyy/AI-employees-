@@ -2,7 +2,7 @@
 
 # 🤖 AI Workforce Framework
 
-> 🎬 **[▶ Watch the Live AI Office Animation](https://hrushikeshreddyyyyy.github.io/AI-employees-/office-animation.html)** — See all 20 agents working in real time!
+> 🎬 **[▶ Watch the Live AI Office Animation](https://raw.githubusercontent.com/HrushikeshReddyyyy/AI-employees-/implement-ai-workforce-11055125774821153684/office-animation.html)** — See all 20 agents working in real time!
 
 **A distributed AI workforce of 20 specialized agents collaborating through a shared memory framework to operate a complete AI software development company.**
 
@@ -20,9 +20,9 @@
 
 ## 📖 Overview
 
-The **AI Workforce Framework** simulates a fully functional AI software development company. It provisions **20 specialized AI employee agents**, each with a distinct role and area of expertise, and connects them through a **Shared Memory** system that acts as the company's central nervous system — enabling real-time collaboration, context sharing, and asynchronous communication.
+The **AI Workforce Framework** simulates a fully functional AI software development company. It provisions **20 specialized AI employee agents**, each with a distinct role and area of expertise, a[...]
 
-This framework is designed to model how large-scale multi-agent AI systems can self-organize and collaborate to handle complex, multi-disciplinary software projects end-to-end — from product strategy and design to engineering, deployment, security, and compliance.
+This framework is designed to model how large-scale multi-agent AI systems can self-organize and collaborate to handle complex, multi-disciplinary software projects end-to-end — from product str[...]
 
 ---
 
@@ -30,7 +30,7 @@ This framework is designed to model how large-scale multi-agent AI systems can s
 
 - 🧠 **Shared Memory Architecture** — A centralized, thread-friendly memory store allows any agent to broadcast messages and any other agent to query or retrieve them by keyword or chronology.
 - 👥 **20 Specialized AI Agents** — Roles span the full lifecycle of a modern tech company: executive leadership, engineering, data science, research, design, security, ethics, and more.
-- 📄 **Role-Based Configuration via Markdown** — Agent roles and responsibilities are defined in a human-readable `roles.md` file and parsed at runtime, making the workforce easy to extend or modify without touching core logic.
+- 📄 **Role-Based Configuration via Markdown** — Agent roles and responsibilities are defined in a human-readable `roles.md` file and parsed at runtime, making the workforce easy to extend or [...]
 - 🔍 **Keyword Search on Shared Memory** — Agents (and developers) can search the memory log for specific topics, enabling targeted context retrieval.
 - ⚡ **Lightweight & Extensible** — Built with zero external dependencies. Swap in LLM backends, async queues, or vector databases with minimal refactoring.
 
@@ -205,6 +205,7 @@ The next run of `workforce.py` will automatically load the new agent.
 ai-workforce-framework/
 ├── workforce.py        # Core: SharedMemory and Employee classes
 ├── roles.md            # Config: all 20 agent role definitions
+├── office-animation.html # Web Dashboard: Live agent visualization
 └── README.md           # Documentation
 ```
 
@@ -212,12 +213,12 @@ ai-workforce-framework/
 
 ## 🗺️ Roadmap
 
+- [x] **Web Dashboard** — Live visualization of agent statuses and the shared memory feed (`office-animation.html`)
 - [ ] **Async Collaboration** — Replace the list with an async pub/sub queue (Redis Streams or asyncio)
 - [ ] **LLM Integration** — Wire each `Employee` to a real LLM (OpenAI, Anthropic, Ollama)
 - [ ] **Vector Memory** — Replace list search with semantic vector search (ChromaDB, FAISS)
 - [ ] **Agent Orchestration** — Add a supervisor agent that routes tasks to the right employee
 - [ ] **REST API** — Expose the workforce as a FastAPI service
-- [ ] **Web Dashboard** — Live visualization of agent statuses and the shared memory feed
 
 ---
 
