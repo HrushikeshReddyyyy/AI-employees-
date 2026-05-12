@@ -1,14 +1,14 @@
-# 🤖 AI Workforce Framework
-
 <div align="center">
 
-![AI Workforce](https://img.shields.io/badge/AI-Workforce%20Framework-6C63FF?style=for-the-badge&logo=robot&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Active-22C55E?style=for-the-badge)
-![Agents](https://img.shields.io/badge/AI%20Agents-20-F59E0B?style=for-the-badge)
+# 🤖 AI Workforce Framework
 
 **A distributed AI workforce of 20 specialized agents collaborating through a shared memory framework to operate a complete AI software development company.**
+
+[![AI Workforce](https://img.shields.io/badge/AI-Workforce%20Framework-6C63FF?style=for-the-badge&logo=robot&logoColor=white)](https://github.com)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active-22C55E?style=for-the-badge)](https://github.com)
+[![Agents](https://img.shields.io/badge/AI%20Agents-20-F59E0B?style=for-the-badge)](roles.md)
 
 [Getting Started](#-getting-started) · [Architecture](#-architecture) · [Meet the Team](#-meet-the-team) · [Usage](#-usage) · [Contributing](#-contributing)
 
@@ -50,12 +50,10 @@ This framework is designed to model how large-scale multi-agent AI systems can s
 │                             │                               │
 │                   ┌─────────▼──────────┐                    │
 │                   │   Shared Memory    │                    │
-│                   │   Framework        │                    │
 │                   │                   │                    │
-│                   │  • write(agent,   │                    │
-│                   │    message)       │                    │
-│                   │  • read_all()     │                    │
-│                   │  • search(kw)     │                    │
+│                   │  write(agent, msg)│                    │
+│                   │  read_all()        │                    │
+│                   │  search(keyword)  │                    │
 │                   └─────────┬──────────┘                    │
 │                             │                               │
 │        ┌────────────────────┴─────────────────────┐         │
@@ -73,9 +71,9 @@ This framework is designed to model how large-scale multi-agent AI systems can s
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| `SharedMemory` | `workforce.py` | Central message store with write, read, and search capabilities |
-| `Employee` | `workforce.py` | Base agent class with collaborate and read_updates methods |
-| `load_roles_from_file()` | `workforce.py` | Parses `roles.md` to dynamically instantiate the workforce |
+| `SharedMemory` | `workforce.py` | Central message store with write, read, and search |
+| `Employee` | `workforce.py` | Base agent class with collaborate and read_updates |
+| `load_roles_from_file()` | `workforce.py` | Parses `roles.md` to dynamically instantiate agents |
 | Role Definitions | `roles.md` | Human-readable configuration of all 20 agent roles |
 
 ---
@@ -96,11 +94,11 @@ This framework is designed to model how large-scale multi-agent AI systems can s
 | 10 | 🎨 **UX/UI Designer** | User-centered interfaces, usability testing |
 | 11 | 🏋️ **Model Trainer** | Fine-tuning, distributed training, gradient boosting |
 | 12 | ⚖️ **Model Evaluator** | Performance assessment, accuracy/precision/recall metrics |
-| 13 | 🕸️ **Knowledge Graph Engineer** | Entity disambiguation, semantic reasoning, knowledge graphs |
+| 13 | 🕸️ **Knowledge Graph Engineer** | Entity disambiguation, semantic reasoning |
 | 14 | 🗣️ **NLP Specialist** | Transformer architectures, sentiment analysis, translation |
 | 15 | 🛡️ **Security Engineer** | Infrastructure security, vulnerability monitoring |
 | 16 | 📦 **Product Manager** | Product vision, roadmap, cross-team coordination |
-| 17 | ☁️ **Cloud Architect** | Scalable cloud infrastructure, cost & performance optimization |
+| 17 | ☁️ **Cloud Architect** | Scalable cloud infrastructure, cost & performance |
 | 18 | ⚖️ **Ethics & Compliance Officer** | AI ethics, data privacy, fairness, transparency |
 | 19 | 🖥️ **Frontend Developer** | React/JS applications, user-facing interfaces |
 | 20 | 🗄️ **Backend Developer** | Server-side logic, APIs, AI model integration |
@@ -124,7 +122,7 @@ git clone https://github.com/your-username/ai-workforce-framework.git
 cd ai-workforce-framework
 ```
 
-### Running the Framework
+### Run the Framework
 
 ```bash
 python workforce.py
@@ -158,20 +156,20 @@ from workforce import SharedMemory, Employee, load_roles_from_file
 # Initialize the shared memory bus
 shared_memory = SharedMemory()
 
-# Load all 20 agents from configuration
+# Load all 20 agents from roles.md
 roles_data = load_roles_from_file("roles.md")
 employees = [
     Employee(d['id'], d['title'], d['description'], shared_memory)
     for d in roles_data
 ]
 
-# Agents collaborate through the shared memory
+# Agents collaborate through shared memory
 ceo = employees[0]
 cto = employees[1]
 data_scientist = employees[2]
 
 ceo.collaborate("Initiating Q3 AI roadmap planning session.")
-cto.collaborate("Engineering team is ready. We'll focus on transformer optimization.")
+cto.collaborate("Engineering team is ready. Focusing on transformer optimization.")
 
 # Any agent can read the full shared log
 updates = data_scientist.read_updates()
@@ -182,20 +180,20 @@ for update in updates:
 ### Searching Shared Memory
 
 ```python
-# Search for messages containing a specific keyword
+# Search for messages containing a keyword
 security_updates = shared_memory.search("security")
 pipeline_updates = shared_memory.search("CI/CD")
 ```
 
-### Adding a New Agent Role
+### Adding a New Agent
 
-Edit `roles.md` and add a new line following this format:
+Edit `roles.md` and add a line in this exact format:
 
 ```
 Employee 21: Your New Role - Description of responsibilities and methods used.
 ```
 
-The next time `workforce.py` runs, your new agent will be automatically loaded.
+The next run of `workforce.py` will automatically load the new agent.
 
 ---
 
@@ -203,35 +201,33 @@ The next time `workforce.py` runs, your new agent will be automatically loaded.
 
 ```
 ai-workforce-framework/
-├── workforce.py        # Core framework: SharedMemory, Employee classes
-├── roles.md            # Configuration file defining all 20 agent roles
-└── README.md           # Project documentation
+├── workforce.py        # Core: SharedMemory and Employee classes
+├── roles.md            # Config: all 20 agent role definitions
+└── README.md           # Documentation
 ```
 
 ---
 
 ## 🗺️ Roadmap
 
-- [ ] **Async Collaboration** — Replace the synchronous list with an async pub/sub message queue (e.g., Redis Streams or asyncio queues)
-- [ ] **LLM Integration** — Wire each `Employee` to a real LLM (OpenAI, Anthropic, local Ollama) to generate dynamic, context-aware responses
-- [ ] **Vector Memory** — Replace list-based search with semantic vector search (e.g., ChromaDB, FAISS) for smarter context retrieval
-- [ ] **Agent Orchestration** — Add a supervisor/orchestrator agent that routes tasks to the most relevant employee
-- [ ] **REST API** — Expose the workforce as a FastAPI service for external integration
-- [ ] **Web Dashboard** — Live visualization of the office, agent statuses, and shared memory feed
+- [ ] **Async Collaboration** — Replace the list with an async pub/sub queue (Redis Streams or asyncio)
+- [ ] **LLM Integration** — Wire each `Employee` to a real LLM (OpenAI, Anthropic, Ollama)
+- [ ] **Vector Memory** — Replace list search with semantic vector search (ChromaDB, FAISS)
+- [ ] **Agent Orchestration** — Add a supervisor agent that routes tasks to the right employee
+- [ ] **REST API** — Expose the workforce as a FastAPI service
+- [ ] **Web Dashboard** — Live visualization of agent statuses and the shared memory feed
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how to get started:
+Contributions are welcome!
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature-name`
 3. Commit your changes: `git commit -m 'Add some feature'`
 4. Push to the branch: `git push origin feature/your-feature-name`
 5. Open a Pull Request
-
-Please make sure your code follows the existing style and that any new roles added to `roles.md` follow the established format.
 
 ---
 
@@ -245,6 +241,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 **Built with intelligent collaboration in mind.**
 
-*20 agents. 1 shared memory. Infinite possibilities.*
+*20 agents · 1 shared memory · Infinite possibilities*
 
 </div>
