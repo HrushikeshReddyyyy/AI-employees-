@@ -2,6 +2,8 @@
 
 # 🤖 AI Workforce Framework
 
+> 🎬 **[▶ Watch the Live AI Office Animation](https://hrushikeshreddyyyyy.github.io/AI-employees-/office-animation.html)** — See all 20 agents working in real time!
+
 **A distributed AI workforce of 20 specialized agents collaborating through a shared memory framework to operate a complete AI software development company.**
 
 [![AI Workforce](https://img.shields.io/badge/AI-Workforce%20Framework-6C63FF?style=for-the-badge&logo=robot&logoColor=white)](https://github.com)
