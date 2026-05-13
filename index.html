@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Workforce HQ — Live Office</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --floor: #0a0e1a;
+    --wall: #0d1220;
+    --desk: #111827;
+    --accent: #3b82f6;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --pink: #ec4899;
+    --purple: #8b5cf6;
+    --cyan: #06b6d4;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #475569;
+    --border: #1e293b;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--floor);
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: fixed; top:0; left:0; right:0; z-index:100;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+
+  .header-badges { display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+
+  .hbadge {
+    font-size: 10px; padding: 4px 10px; border-radius: 20px;
+    font-weight: 600; letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 5px;
+    border: 1px solid;
+  }
+  .hbadge.online  { background:#052e16; color:#4ade80; border-color:#166534; }
+  .hbadge.mem     { background:#172554; color:#60a5fa; border-color:#1d4ed8; }
+  .hbadge.readme  { background:#2d1b00; color:#fbbf24; border-color:#92400e; }
+
+  .dot { width:6px; height:6px; border-radius:50%; animation: blink 1.2s ease-in-out infinite; }
+  .dot.g { background:#4ade80; }
+  .dot.b { background:#60a5fa; }
+  .dot.y { background:#fbbf24; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+  /* ── MEMORY TICKER ── */
+  .ticker {
+    position: fixed; top: 58px; left:0; right:0; z-index:99;
+    background: #060a14;
+    border-bottom: 1px solid var(--border);
+    padding: 6px 0;
+    display: flex; align-items: center; gap: 0;
+    overflow: hidden;
+  }
+  .ticker-label {
+    background: var(--accent);
+    color: #fff;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 12px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .ticker-track { overflow: hidden; flex: 1; }
+  .ticker-inner {
+    display: inline-flex; gap: 48px;
+    animation: ticker 40s linear infinite;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  .tick { color: #334155; }
+  .tick span { color: var(--accent); }
+  .tick em { color: var(--green); font-style:normal; }
+
+  /* ── MAIN SCENE ── */
+  main { padding-top: 110px; }
+
+  /* ── OFFICE CONTAINER ── */
+  .office-wrap {
+    perspective: 900px;
+    padding: 32px 24px;
+  }
+
+  .office-floor-3d {
+    transform: rotateX(18deg);
+    transform-origin: top center;
+    transform-style: preserve-3d;
+  }
+
+  /* ── FLOOR GRID ── */
+  .floor-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    padding: 24px;
+    background:
+      linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+  }
+
+  /* floor glow */
+  .floor-grid::before {
+    content:'';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 80%, rgba(59,130,246,0.06), transparent);
+    border-radius: 16px;
+    pointer-events: none;
+  }
+
+  /* ── DESK CARD ── */
+  .desk {
+    background: var(--desk);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 10px 10px;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 7px;
+    position: relative;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    cursor: default;
+    min-height: 140px;
+  }
+
+  .desk:hover {
+    transform: translateY(-6px) scale(1.03);
+    border-color: var(--accent);
+    box-shadow: 0 12px 40px rgba(59,130,246,0.18), 0 0 0 1px rgba(59,130,246,0.2);
+    z-index: 10;
+  }
+
+  /* ── MONITOR on desk ── */
+  .monitor {
+    width: 44px; height: 30px;
+    background: #0d1117;
+    border: 2px solid #1e293b;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .monitor::after { /* stand */
+    content:'';
+    position: absolute; bottom:-7px; left:50%;
+    transform: translateX(-50%);
+    width: 14px; height: 5px;
+    background: #1e293b;
+    border-radius: 0 0 3px 3px;
+  }
+
+  /* scrolling code on monitor */
+  .monitor-screen {
+    width:100%; height:100%;
+    overflow: hidden;
+    padding: 2px 3px;
+  }
+  .code-scroll {
+    font-size: 3.5px;
+    line-height: 1.6;
+    color: #1a3a1a;
+    animation-name: code-up;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes code-up { 0%{transform:translateY(0)} 100%{transform:translateY(-60%)} }
+
+  .cl { color: #1a3a1a; }
+  .cl.g { color: #166534; }
+  .cl.b { color: #1e3a5f; }
+  .cl.y { color: #713f12; }
+  .cl.p { color: #3b0764; }
+
+  /* ── AGENT AVATAR ── */
+  .avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    border: 2px solid transparent;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* animated ring */
+  .avatar::before {
+    content:'';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    border-top-color: currentColor;
+    animation: spin 2.5s linear infinite;
+    opacity: 0.5;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .agent-name {
+    font-size: 8.5px; font-weight: 600;
+    color: #94a3b8;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    letter-spacing: 0.02em;
+  }
+  .agent-role {
+    font-size: 7.5px;
+    color: #334155;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  /* ── ACTIVITY BADGE ── */
+  .badge {
+    position: absolute; top: 7px; right: 7px;
+    font-size: 7.5px; padding: 2px 6px;
+    border-radius: 5px; font-weight: 700;
+    letter-spacing: 0.04em;
+    border: 1px solid;
+  }
+
+  /* ── TYPING BAR ── */
+  .tbar { width: 100%; height: 3px; background: #1e293b; border-radius: 2px; overflow:hidden; }
+  .tprog {
+    height: 100%; border-radius: 2px;
+    animation: typing linear infinite;
+  }
+  @keyframes typing {
+    0%   { width:0%;   opacity: 0.6; }
+    50%  { width:100%; opacity: 1;   }
+    100% { width:0%;   opacity: 0.6; }
+  }
+
+  /* ── SIDE PANELS ── */
+  .panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 24px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 700px) {
+    .floor-grid { grid-template-columns: repeat(4,1fr); }
+    .panels { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 500px) {
+    .floor-grid { grid-template-columns: repeat(3,1fr); }
+  }
+
+  .panel {
+    background: #0d1220;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .panel-head {
+    background: #060a14;
+    border-bottom: 1px solid var(--border);
+    padding: 9px 14px;
+    font-size: 11px; font-weight: 600;
+    color: #64748b;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel-head span { color: var(--accent); }
+
+  /* README EDITOR */
+  .readme-body {
+    padding: 12px 14px;
+    font-size: 11px;
+    line-height: 1.85;
+    background: #060a14;
+    min-height: 180px;
+    position: relative;
+    overflow: hidden;
+  }
+  .md-h1   { color: #e2e8f0; font-size: 13px; font-weight: 700; }
+  .md-h2   { color: #60a5fa; font-weight: 600; }
+  .md-badge{ color: #4ade80; }
+  .md-code { color: #f87171; background: #1a0a0a; padding: 0 3px; border-radius: 3px; }
+  .md-link { color: #60a5fa; }
+  .md-bold { color: #fbbf24; }
+  .md-dim  { color: #1e293b; }
+  .md-table-h { color: #a78bfa; }
+  .md-table-r { color: #475569; }
+  .cursor {
+    display: inline-block;
+    width: 2px; height: 12px;
+    background: #60a5fa;
+    margin-left: 1px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  .writer-tag {
+    position: absolute; bottom: 8px; right: 10px;
+    font-size: 9px; color: #4ade80;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* SHARED MEMORY LOG */
+  .log-body {
+    padding: 10px 14px;
+    font-size: 10px;
+    line-height: 2;
+    min-height: 180px;
+    background: #060a14;
+  }
+  .log-row { display:flex; gap:10px; align-items: baseline; animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+  .log-t  { color: #1e3a5f; white-space:nowrap; }
+  .log-ag { color: #60a5fa; white-space:nowrap; }
+  .log-m  { color: #475569; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+  .log-ok { color: #4ade80; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex; gap: 14px; flex-wrap: wrap;
+    padding: 0 24px 24px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .stat-card {
+    flex: 1; min-width: 120px;
+    background: #0d1220;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800;
+    line-height: 1;
+  }
+  .stat-label { font-size: 9px; color: #334155; margin-top: 4px; letter-spacing:0.06em; }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    color: #334155; text-transform: uppercase;
+    padding: 20px 24px 10px;
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  /* github link at bottom */
+  .gh-link {
+    text-align:center; padding: 24px;
+    font-size: 11px; color: #334155;
+  }
+  .gh-link a {
+    color: var(--accent); text-decoration: none;
+    border-bottom: 1px solid rgba(59,130,246,0.3);
+    padding-bottom: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">⚡ AI Workforce HQ</div>
+  <div style="font-size:10px;color:#334155;font-family:'Syne',sans-serif;">ai-workforce-framework / main</div>
+  <div class="header-badges">
+    <div class="hbadge online"><div class="dot g"></div>20 agents online</div>
+    <div class="hbadge mem"><div class="dot b"></div>Shared Memory active</div>
+    <div class="hbadge readme"><div class="dot y"></div>README.md editing</div>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-label">⚡ SHARED MEMORY</div>
+  <div class="ticker-track">
+    <div class="ticker-inner" id="ticker-inner">
+      <span class="tick"><span>[CEO]</span> Prioritizing README docs for Q2 launch — <em>WRITTEN</em></span>
+      <span class="tick"><span>[CTO]</span> Architecture ASCII diagram approved — <em>PUSHED</em></span>
+      <span class="tick"><span>[Tech Writer]</span> All 20 roles formatted in table — <em>DONE</em></span>
+      <span class="tick"><span>[DevOps]</span> CI/CD docs pipeline triggered — <em>RUNNING</em></span>
+      <span class="tick"><span>[Security]</span> No secrets in public README — <em>CLEAR</em></span>
+      <span class="tick"><span>[NLP Specialist]</span> Grammar pass complete — <em>DONE</em></span>
+      <span class="tick"><span>[QA]</span> Markdown lint: 0 errors — <em>PASS</em></span>
+      <span class="tick"><span>[Cloud Architect]</span> Badge CDN verified live — <em>OK</em></span>
+      <span class="tick"><span>[CEO]</span> Prioritizing README docs for Q2 launch — <em>WRITTEN</em></span>
+      <span class="tick"><span>[CTO]</span> Architecture ASCII diagram approved — <em>PUSHED</em></span>
+      <span class="tick"><span>[Tech Writer]</span> All 20 roles formatted in table — <em>DONE</em></span>
+      <span class="tick"><span>[DevOps]</span> CI/CD docs pipeline triggered — <em>RUNNING</em></span>
+      <span class="tick"><span>[Security]</span> No secrets in public README — <em>CLEAR</em></span>
+      <span class="tick"><span>[NLP Specialist]</span> Grammar pass complete — <em>DONE</em></span>
+      <span class="tick"><span>[QA]</span> Markdown lint: 0 errors — <em>PASS</em></span>
+      <span class="tick"><span>[Cloud Architect]</span> Badge CDN verified live — <em>OK</em></span>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- STATS -->
+<div class="section-label">Live Office Stats</div>
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-num" style="color:#3b82f6;" id="s-agents">20</div>
+    <div class="stat-label">AI AGENTS ACTIVE</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" style="color:#22c55e;" id="s-commits">0</div>
+    <div class="stat-label">README COMMITS</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" style="color:#f59e0b;" id="s-msgs">0</div>
+    <div class="stat-label">MEMORY MESSAGES</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" style="color:#8b5cf6;" id="s-lines">0</div>
+    <div class="stat-label">README LINES</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" style="color:#ec4899;" id="s-uptime">00:00</div>
+    <div class="stat-label">UPTIME</div>
+  </div>
+</div>
+
+<!-- OFFICE FLOOR -->
+<div class="section-label">Office Floor — 20 AI Agents Working Live</div>
+<div class="office-wrap">
+  <div class="office-floor-3d">
+    <div class="floor-grid" id="office-floor"></div>
+  </div>
+</div>
+
+<!-- PANELS -->
+<div class="section-label">Live Activity</div>
+<div class="panels">
+  <!-- README EDITOR -->
+  <div class="panel">
+    <div class="panel-head"><span>📄</span> README.md — Live Edit Session</div>
+    <div class="readme-body" id="readme-body">
+      <div><span class="md-h1"># 🤖 AI Workforce Framework</span></div>
+      <div>&nbsp;</div>
+      <div><span class="md-badge">[![AI](https://img.shields.io/badge/AI-Workforce-6C63FF)]</span></div>
+      <div><span class="md-badge">[![Python](https://img.shields.io/badge/Python-3.8+-3776AB)]</span></div>
+      <div>&nbsp;</div>
+      <div><span class="md-h2">## 📖 Overview</span></div>
+      <div>A distributed AI workforce of <span class="md-bold">20 specialized</span></div>
+      <div>agents collaborating through <span class="md-code">SharedMemory</span>.</div>
+      <div>&nbsp;</div>
+      <div id="live-line"><span class="md-h2">## ✨ Key Features</span><span class="cursor"></span></div>
+      <div class="writer-tag"><div class="dot g"></div><span id="writer-name">Tech Writer</span> is typing...</div>
+    </div>
+  </div>
+
+  <!-- MEMORY LOG -->
+  <div class="panel">
+    <div class="panel-head"><span>📋</span> Shared Memory Log <span style="margin-left:auto;color:#22c55e;font-size:9px;" id="log-count">0 entries</span></div>
+    <div class="log-body" id="log-body"></div>
+  </div>
+</div>
+
+<div class="gh-link">
+  This animation is part of the <a href="https://github.com/HrushikeshReddyyyy/AI-employees-">AI Workforce Framework</a> project.
+  Add this file to your repo and link it in your README!
+</div>
+
+</main>
+
+<script>
+const agents = [
+  {id:1,  emoji:'👔', name:'CEO',            role:'Strategic Planning',  badge:'MEETING', bc:'#1a1a00', btc:'#fbbf24', bc2:'#92400e', ac:'#fbbf24', delay:0},
+  {id:2,  emoji:'💻', name:'CTO',            role:'Tech Oversight',      badge:'REVIEW',  bc:'#1a0d2e', btc:'#a78bfa', bc2:'#5b21b6', ac:'#a78bfa', delay:0.4},
+  {id:3,  emoji:'📊', name:'Data Scientist', role:'ML Models',           badge:'CODE',    bc:'#0c1a3a', btc:'#60a5fa', bc2:'#1d4ed8', ac:'#3b82f6', delay:0.8},
+  {id:4,  emoji:'👨‍💻', name:'Software Eng',  role:'App Dev',             badge:'CODE',    bc:'#0c1a3a', btc:'#60a5fa', bc2:'#1d4ed8', ac:'#3b82f6', delay:1.2},
+  {id:5,  emoji:'⚙️', name:'DevOps Eng',    role:'CI/CD',               badge:'DEPLOY',  bc:'#052e16', btc:'#4ade80', bc2:'#166534', ac:'#22c55e', delay:1.6},
+  {id:6,  emoji:'✅', name:'QA Engineer',   role:'Testing',             badge:'TEST',    bc:'#2a0a0a', btc:'#f87171', bc2:'#7f1d1d', ac:'#ef4444', delay:0.2},
+  {id:7,  emoji:'🔬', name:'Research Sci',  role:'Innovation',          badge:'RSRCH',   bc:'#0c1a2e', btc:'#7dd3fc', bc2:'#0c4a6e', ac:'#06b6d4', delay:0.6},
+  {id:8,  emoji:'📈', name:'Biz Analyst',   role:'Requirements',        badge:'MEET',    bc:'#1a1a00', btc:'#fbbf24', bc2:'#92400e', ac:'#f59e0b', delay:1.0},
+  {id:9,  emoji:'📝', name:'Tech Writer',   role:'Documentation',       badge:'DOCS',    bc:'#0a1a0a', btc:'#86efac', bc2:'#14532d', ac:'#22c55e', delay:1.4},
+  {id:10, emoji:'🎨', name:'UX Designer',   role:'Interfaces',          badge:'DESIGN',  bc:'#2d0a1a', btc:'#f9a8d4', bc2:'#9d174d', ac:'#ec4899', delay:1.8},
+  {id:11, emoji:'🏋️', name:'Model Trainer', role:'Fine-tuning',         badge:'TRAIN',   bc:'#052e16', btc:'#4ade80', bc2:'#166534', ac:'#22c55e', delay:0.1},
+  {id:12, emoji:'⚖️', name:'Model Evaluator',role:'Metrics',            badge:'EVAL',    bc:'#1a0d2e', btc:'#a78bfa', bc2:'#5b21b6', ac:'#8b5cf6', delay:0.5},
+  {id:13, emoji:'🕸️', name:'KG Engineer',  role:'Knowledge Graphs',    badge:'CODE',    bc:'#0c1a3a', btc:'#60a5fa', bc2:'#1d4ed8', ac:'#3b82f6', delay:0.9},
+  {id:14, emoji:'🗣️', name:'NLP Specialist',role:'Transformers',        badge:'RSRCH',   bc:'#0c1a2e', btc:'#7dd3fc', bc2:'#0c4a6e', ac:'#06b6d4', delay:1.3},
+  {id:15, emoji:'🛡️', name:'Security Eng', role:'Vulnerability',       badge:'SECURE',  bc:'#2a0a0a', btc:'#fca5a5', bc2:'#7f1d1d', ac:'#f87171', delay:1.7},
+  {id:16, emoji:'📦', name:'Product Mgr',   role:'Roadmap',             badge:'MEET',    bc:'#1a1a00', btc:'#fbbf24', bc2:'#92400e', ac:'#f59e0b', delay:0.3},
+  {id:17, emoji:'☁️', name:'Cloud Architect',role:'Infrastructure',     badge:'DEPLOY',  bc:'#052e16', btc:'#4ade80', bc2:'#166534', ac:'#22c55e', delay:0.7},
+  {id:18, emoji:'⚖️', name:'Ethics Officer',role:'Compliance',          badge:'DOCS',    bc:'#0a1a0a', btc:'#86efac', bc2:'#14532d', ac:'#22c55e', delay:1.1},
+  {id:19, emoji:'🖥️', name:'Frontend Dev', role:'React/JS',            badge:'CODE',    bc:'#0c1a3a', btc:'#60a5fa', bc2:'#1d4ed8', ac:'#3b82f6', delay:1.5},
+  {id:20, emoji:'🗄️', name:'Backend Dev',  role:'APIs & Logic',        badge:'DEPLOY',  bc:'#052e16', btc:'#4ade80', bc2:'#166534', ac:'#22c55e', delay:1.9},
+];
+
+const codeLines = [
+  '<span class="cl g">def collaborate(self, msg):</span>',
+  '<span class="cl b">  self.mem.write(</span>',
+  '<span class="cl y">    self.title, msg</span>',
+  '<span class="cl">  )</span>',
+  '<span class="cl p">class SharedMemory:</span>',
+  '<span class="cl g">  def write(self, ag, m):</span>',
+  '<span class="cl b">    self._mem.append(</span>',
+  '<span class="cl y">      f"[{ag}]: {m}"</span>',
+  '<span class="cl">    )</span>',
+  '<span class="cl g">  def search(self, kw):</span>',
+  '<span class="cl b">    return [e for e</span>',
+  '<span class="cl b">      in self._mem</span>',
+  '<span class="cl y">      if kw in e]</span>',
+];
+
+const floor = document.getElementById('office-floor');
+
+agents.forEach(a => {
+  const desk = document.createElement('div');
+  desk.className = 'desk';
+  desk.title = `${a.name} — ${a.role}`;
+
+  // badge
+  const badge = document.createElement('div');
+  badge.className = 'badge';
+  badge.textContent = a.badge;
+  badge.style.background = a.bc;
+  badge.style.color = a.btc;
+  badge.style.borderColor = a.bc2;
+
+  // monitor
+  const mon = document.createElement('div');
+  mon.className = 'monitor';
+  const scr = document.createElement('div');
+  scr.className = 'monitor-screen';
+  const scroll = document.createElement('div');
+  scroll.className = 'code-scroll';
+  scroll.style.animationDuration = (6 + Math.random()*6).toFixed(1)+'s';
+  scroll.style.animationDelay = (-Math.random()*6).toFixed(1)+'s';
+  scroll.innerHTML = [...codeLines,...codeLines].join('<br>');
+  scr.appendChild(scroll);
+  mon.appendChild(scr);
+
+  // avatar
+  const av = document.createElement('div');
+  av.className = 'avatar';
+  av.style.background = a.bc;
+  av.style.color = a.ac;
+  av.textContent = a.emoji;
+
+  // name + role
+  const nm = document.createElement('div');
+  nm.className = 'agent-name';
+  nm.textContent = a.name;
+
+  const rl = document.createElement('div');
+  rl.className = 'agent-role';
+  rl.textContent = a.role;
+
+  // progress bar
+  const tbar = document.createElement('div');
+  tbar.className = 'tbar';
+  const tprog = document.createElement('div');
+  tprog.className = 'tprog';
+  tprog.style.background = a.ac;
+  tprog.style.animationDuration = (2.2 + Math.random()*3).toFixed(1)+'s';
+  tprog.style.animationDelay = a.delay+'s';
+  tbar.appendChild(tprog);
+
+  desk.appendChild(badge);
+  desk.appendChild(mon);
+  desk.appendChild(av);
+  desk.appendChild(nm);
+  desk.appendChild(rl);
+  desk.appendChild(tbar);
+  floor.appendChild(desk);
+});
+
+// ── LIVE README LINES ──
+const readmeLines = [
+  '<span class="md-h2">## ✨ Key Features</span>',
+  '',
+  '<span class="md-badge">- 🧠 **Shared Memory** Architecture</span>',
+  '<span class="md-badge">- 👥 **20 Specialized** AI Agents</span>',
+  '<span class="md-badge">- 📄 Role-Based **Markdown** Config</span>',
+  '<span class="md-badge">- 🔍 Keyword Search on Memory</span>',
+  '',
+  '<span class="md-h2">## 🏗️ Architecture</span>',
+  '',
+  '<span class="md-dim">```</span>',
+  '<span class="md-dim">┌─────────────────────────┐</span>',
+  '<span class="md-dim">│   AI Workforce Framework │</span>',
+  '<span class="md-dim">├───────────┬─────────────┤</span>',
+  '<span class="md-dim">│ CEO · CTO │ Eng · Design │</span>',
+  '<span class="md-dim">└─────┬─────┴──────┬──────┘</span>',
+  '<span class="md-dim">      │  SharedMem  │      </span>',
+  '<span class="md-dim">      └─────────────┘      </span>',
+  '<span class="md-dim">```</span>',
+  '',
+  '<span class="md-h2">## 👥 Meet the Team</span>',
+  '',
+  '<span class="md-table-h">| # | Role | Responsibility |</span>',
+  '<span class="md-table-r">|---|------|----------------|</span>',
+  '<span class="md-table-r">| 1 | 💼 CEO | Strategic planning |</span>',
+  '<span class="md-table-r">| 2 | 💻 CTO | Tech oversight |</span>',
+  '<span class="md-table-r">| 3 | 📊 Data Scientist | ML models |</span>',
+  '',
+  '<span class="md-h2">## 🚀 Getting Started</span>',
+  '',
+  '<span class="md-dim">```bash</span>',
+  '<span class="md-badge">git clone https://github.com/you/ai-workforce</span>',
+  '<span class="md-badge">python workforce.py</span>',
+  '<span class="md-dim">```</span>',
+  '',
+  '<span class="md-h2">## 🗺️ Roadmap</span>',
+  '',
+  '<span class="md-badge">- [ ] LLM Integration</span>',
+  '<span class="md-badge">- [ ] Vector Memory Search</span>',
+  '<span class="md-badge">- [ ] REST API Layer</span>',
+  '<span class="md-badge">- [ ] Web Dashboard ✓ (this!)</span>',
+];
+
+const writers = ['Tech Writer','CTO','CEO','DevOps Eng','QA Engineer','NLP Specialist','Data Scientist','Backend Dev'];
+let rIdx = 0;
+const liveLine = document.getElementById('live-line');
+const writerName = document.getElementById('writer-name');
+
+function updateReadme() {
+  if (rIdx >= readmeLines.length) rIdx = 0;
+  writerName.textContent = writers[Math.floor(Math.random()*writers.length)];
+  liveLine.innerHTML = (readmeLines[rIdx] || '&nbsp;') + '<span class="cursor"></span>';
+  rIdx++;
+}
+setInterval(updateReadme, 750);
+
+// ── LOG ──
+const logMessages = [
+  {ag:'[Tech Writer]',  m:'Drafting architecture section...'},
+  {ag:'[CTO]',          m:'Code block verified ✓', ok:true},
+  {ag:'[QA Engineer]',  m:'Markdown lint: 0 errors ✓', ok:true},
+  {ag:'[DevOps]',       m:'Docs pipeline triggered'},
+  {ag:'[NLP Specialist]',m:'Language quality pass done ✓', ok:true},
+  {ag:'[CEO]',          m:'README approved for release ✓', ok:true},
+  {ag:'[Security Eng]', m:'No sensitive data exposed ✓', ok:true},
+  {ag:'[Product Mgr]',  m:'Roadmap section updated'},
+  {ag:'[Data Scientist]',m:'Architecture diagram verified ✓', ok:true},
+  {ag:'[Cloud Architect]',m:'Badge CDN endpoints live ✓', ok:true},
+  {ag:'[Backend Dev]',  m:'API section cross-checked ✓', ok:true},
+  {ag:'[Frontend Dev]', m:'Dashboard link validated'},
+  {ag:'[Research Sci]', m:'Related work references added'},
+  {ag:'[Ethics Officer]',m:'Privacy section reviewed ✓', ok:true},
+  {ag:'[Model Trainer]', m:'Training docs updated'},
+  {ag:'[Model Evaluator]',m:'Metrics section added ✓', ok:true},
+  {ag:'[KG Engineer]',  m:'Knowledge graph section merged'},
+  {ag:'[UX Designer]',  m:'Diagram aesthetics approved ✓', ok:true},
+  {ag:'[Biz Analyst]',  m:'Feature list aligned to roadmap'},
+  {ag:'[Model Evaluator]',m:'Final QA pass complete ✓', ok:true},
+];
+
+let logCount = 0;
+const logBody = document.getElementById('log-body');
+const logCountEl = document.getElementById('log-count');
+
+function pad(n){return n<10?'0'+n:n;}
+function addLog() {
+  const e = logMessages[logCount % logMessages.length];
+  logCount++;
+  const now = new Date();
+  const t = pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+  const row = document.createElement('div');
+  row.className = 'log-row';
+  row.innerHTML = `<span class="log-t">${t}</span><span class="log-ag">${e.ag}</span><span class="log-m ${e.ok?'log-ok':''}">${e.m}</span>`;
+  logBody.appendChild(row);
+  if (logBody.children.length > 6) logBody.removeChild(logBody.firstChild);
+  logCountEl.textContent = logCount + ' entries';
+}
+addLog();
+setInterval(addLog, 1800);
+
+// ── STATS ──
+let commits = 0, msgs = 0, lines = 0;
+const startTime = Date.now();
+
+setInterval(()=>{
+  msgs++;
+  document.getElementById('s-msgs').textContent = msgs;
+}, 1800);
+
+setInterval(()=>{
+  lines = Math.min(lines + 1, 250);
+  document.getElementById('s-lines').textContent = lines;
+}, 650);
+
+setInterval(()=>{
+  commits++;
+  document.getElementById('s-commits').textContent = commits;
+}, 8000);
+
+setInterval(()=>{
+  const elapsed = Math.floor((Date.now()-startTime)/1000);
+  const m = Math.floor(elapsed/60), s = elapsed%60;
+  document.getElementById('s-uptime').textContent = pad(m)+':'+pad(s);
+}, 1000);
+</script>
+</body>
+</html>
