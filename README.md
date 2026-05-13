@@ -130,6 +130,18 @@ cd ai-workforce-framework
 python workforce.py
 ```
 
+### Deploy to Vercel (Free)
+
+You can easily deploy this framework and its live office UI to Vercel for free.
+
+1. Create an account on [Vercel](https://vercel.com/) and link it to your GitHub account.
+2. Push this repository to your GitHub account.
+3. In your Vercel dashboard, click **Add New** > **Project**.
+4. Import your newly created repository.
+5. Vercel will automatically detect the configuration in `vercel.json`. Click **Deploy**.
+
+Once deployed, your live office UI will be accessible at the root URL, and the Python simulation API will be available at `/api/run`.
+
 **Expected output:**
 
 ```
