@@ -87,7 +87,7 @@ def main():
         print(emp)
 
     print("\n--- Collaboration Test ---")
-    if len(employees) >= 2:
+    if len(employees) >= 3:
         employees[0].collaborate("We need to prioritize the new predictive analytics model deployment.")
         employees[1].collaborate("Agreed. I will coordinate with the DevOps Engineer to set up the CI/CD pipeline.")
 
