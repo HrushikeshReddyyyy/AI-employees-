@@ -1,0 +1,4 @@
+## 2024-06-13 - [Path Traversal in File Loader]
+**Vulnerability:** The `load_roles_from_file` function in `workforce.py` allowed arbitrary file reading due to missing path validation, creating a risk for path traversal attacks if user input were ever passed to it.
+**Learning:** Functions that accept file paths and read their contents need to validate the path is restricted to expected directories, even if current usage only passes a hardcoded path.
+**Prevention:** Always use `os.path.abspath` to resolve the requested path and compare it against the base directory using `os.path.commonpath` to ensure the resolved path stays within the base directory boundaries.
