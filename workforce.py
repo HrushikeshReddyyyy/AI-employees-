@@ -1,4 +1,5 @@
 import re
+import os
 
 class SharedMemory:
     """
@@ -51,8 +52,14 @@ def load_roles_from_file(filepath):
     Expects lines in the format:
     Employee <ID>: <Title> - <Description>
     """
+    # Security: Prevent path traversal by ensuring the resolved path is within the intended directory
+    base_dir = os.path.realpath(os.getcwd())
+    abs_filepath = os.path.realpath(filepath)
+    if os.path.commonpath([base_dir, abs_filepath]) != base_dir:
+        raise ValueError("Access to the specified path is denied.")
+
     employees_data = []
-    with open(filepath, 'r') as f:
+    with open(abs_filepath, 'r') as f:
         content = f.read()
 
     # Regex to parse the employee lines

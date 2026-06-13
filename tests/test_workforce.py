@@ -58,7 +58,7 @@ class TestEmployee(unittest.TestCase):
 
 class TestLoadRolesFromFile(unittest.TestCase):
     def setUp(self):
-        self.fd, self.temp_filepath = tempfile.mkstemp()
+        self.fd, self.temp_filepath = tempfile.mkstemp(dir=os.getcwd())
         with os.fdopen(self.fd, 'w') as f:
             f.write("Employee 1: Developer - Writes code\n")
             f.write("Employee 2: Tester - Tests code\n")
@@ -79,11 +79,14 @@ class TestLoadRolesFromFile(unittest.TestCase):
         self.assertEqual(roles[1]['description'], "Tests code")
 
     def test_load_roles_empty(self):
-        fd, temp_empty = tempfile.mkstemp()
+        fd, temp_empty = tempfile.mkstemp(dir=os.getcwd())
         os.close(fd)
-        roles = load_roles_from_file(temp_empty)
-        self.assertEqual(roles, [])
-        os.remove(temp_empty)
+        try:
+            roles = load_roles_from_file(temp_empty)
+            self.assertEqual(roles, [])
+        finally:
+            if os.path.exists(temp_empty):
+                os.remove(temp_empty)
 
 if __name__ == '__main__':
     unittest.main()
